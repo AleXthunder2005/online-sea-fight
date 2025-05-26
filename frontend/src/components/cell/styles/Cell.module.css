@@ -1,0 +1,22 @@
+.cell {
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(42, 93, 255, 0.3);
+    box-sizing: border-box;
+    background-color: rgba(26, 58, 143, 0.3);
+    transition: background-color 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.cell:hover {
+    background-color: rgba(42, 93, 255, 0.2);
+}
+
+.cell--ship {
+    background-color: white;
+}
+
+.cell--highlighted {
+    background-color: rgba(46, 204, 113, 0.3);
+}

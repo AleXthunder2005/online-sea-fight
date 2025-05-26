@@ -9,5 +9,9 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+  },
+  server: {
+    host: '0.0.0.0', // Разрешает доступ со всех IP
+    port: 5174,      // Указываем порт явно (если нужно 5174)
   }
 })

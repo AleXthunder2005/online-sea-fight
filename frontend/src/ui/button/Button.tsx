@@ -1,14 +1,21 @@
-import React from 'react';
+import React, {type ButtonHTMLAttributes } from 'react';
 import styles from './styles/Button.module.css';
 
-interface ButtonProps {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
     color: string;
     hoverColor: string;
-    onClick?: () => void;
+    className?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ children, color, hoverColor, onClick }) => {
+const Button: React.FC<ButtonProps> = ({
+                                           children,
+                                           color,
+                                           hoverColor,
+                                           className = '',
+                                           onClick,
+                                           ...props
+                                       }) => {
     const style = {
         '--button-color': color,
         '--button-hover-color': hoverColor,
@@ -16,9 +23,10 @@ const Button: React.FC<ButtonProps> = ({ children, color, hoverColor, onClick })
 
     return (
         <button
-            className={styles['button']}
+            className={`${styles.button} ${className}`}
             style={style}
             onClick={onClick}
+            {...props}
         >
             {children}
         </button>
