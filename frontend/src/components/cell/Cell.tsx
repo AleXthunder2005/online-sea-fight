@@ -1,22 +1,35 @@
 import React from 'react';
 import styles from './styles/Cell.module.css';
-import type {CellState} from "@/types/ship.types.ts";
+import type { CellState } from "@/types/ship.types.ts";
 
 interface CellProps {
     state: CellState;
-    onClick: () => void;
+    onClick?: () => void;
     isHighlighted?: boolean;
-    isShip?: boolean;
 }
 
-const Cell: React.FC<CellProps> = ({ state, onClick, isHighlighted, isShip }) => {
+const Cell: React.FC<CellProps> = ({
+                                       state,
+                                       onClick,
+                                       isHighlighted = false
+                                   }) => {
+    const getCellClass = () => {
+        switch (state) {
+            case 'ship': return styles['cell--ship'];
+            case 'hit': return styles['cell--hit'];
+            case 'miss': return styles['cell--miss'];
+            case 'forbidden': return styles['cell--forbidden'];
+            default: return '';
+        }
+    };
+
     return (
         <div
-            className={`${styles['cell']} ${
-                isShip ? styles['cell--ship'] : ''
-            } ${
-                isHighlighted ? styles['cell--highlighted'] : ''
-            }`}
+            className={`
+                ${styles['cell']} 
+                ${getCellClass()} 
+                ${isHighlighted ? styles['cell--highlighted'] : ''}
+            `}
             onClick={onClick}
         >
         </div>

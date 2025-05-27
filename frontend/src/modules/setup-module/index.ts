@@ -1,0 +1,1 @@
+export {default as SetupModule} from './SetupModule';

@@ -1,0 +1,10 @@
+.battlefield {
+    display: inline-block;
+    background-color: rgba(26, 58, 143, 0.3);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.row {
+    display: flex;
+}

@@ -24,7 +24,6 @@ const Battlefield: React.FC<BattlefieldProps> = ({ matrix, onCellClick, selected
                             onClick={() => onCellClick(rowIndex, colIndex)}
                             isHighlighted={selectedShip !== null &&
                                 canHighlight(matrix, rowIndex, colIndex, selectedShip.size, selectedShip.direction)}
-                            isShip={cellState === 'ship'}
                         />
                     ))}
                 </div>

@@ -1,4 +1,4 @@
-import {MainPage} from "../pages/main-page";
+import {MainPage} from "@/pages/main-page";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {SetupPage} from "@/pages/setup-page";
 
