@@ -31,7 +31,7 @@ const Battlefield: React.FC<BattlefieldProps> = ({
                             key={`${rowIndex}-${colIndex}`}
                             state={cellState}
                             onClick={() => handleClick(rowIndex, colIndex)}
-                            showShip={showShips && cellState === 'ship'}
+                            showShip={showShips}
                         />
                     ))}
                 </div>

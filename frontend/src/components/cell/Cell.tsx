@@ -6,14 +6,17 @@ interface CellProps {
     state: CellState;
     onClick?: () => void;
     isHighlighted?: boolean;
+    showShip?: boolean;
 }
 
 const Cell: React.FC<CellProps> = ({
                                        state,
                                        onClick,
-                                       isHighlighted = false
+                                       isHighlighted = false,
+                                       showShip = true,
                                    }) => {
     const getCellClass = () => {
+        if (!showShip && state === 'ship') return '';
         switch (state) {
             case 'ship': return styles['cell--ship'];
             case 'hit': return styles['cell--hit'];
@@ -30,7 +33,7 @@ const Cell: React.FC<CellProps> = ({
                 ${getCellClass()} 
                 ${isHighlighted ? styles['cell--highlighted'] : ''}
             `}
-            onClick={onClick}
+            onClick={(state === 'empty' || state === 'ship') ? onClick : undefined}
         >
         </div>
     );

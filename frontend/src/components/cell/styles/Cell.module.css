@@ -1,22 +1,66 @@
 .cell {
     width: 40px;
     height: 40px;
-    border: 1px solid rgba(42, 93, 255, 0.3);
+    border: 1px solid rgba(42, 93, 255, 0.5);
     box-sizing: border-box;
-    background-color: rgba(26, 58, 143, 0.3);
-    transition: background-color 0.2s;
+    background-color: rgba(26, 58, 143, 0.4);
+    transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
 }
 
-.cell:hover {
-    background-color: rgba(42, 93, 255, 0.2);
+.cell:hover:not(.cell--ship, .cell--hit, .cell--miss, .cell--forbidden) {
+    background-color: rgba(42, 93, 255, 0.3);
+    cursor: pointer;
+    transform: scale(1.05);
+    box-shadow: 0 0 8px rgba(42, 93, 255, 0.4);
 }
 
 .cell--ship {
     background-color: white;
+    background-size: 6px 6px;
+    border-color: #3a5f9d;
+}
+
+.cell--hit {
+    background-color: #e74c3c;
+    background-image: radial-gradient(
+            circle at center,
+            rgba(255, 255, 255, 0.4) 0%,
+            rgba(231, 76, 60, 0.8) 70%
+    );
+    border-color: #c0392b;
+}
+
+.cell--miss::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cell--forbidden {
+    background-color: rgba(231, 76, 60, 0.2);
+    background-image:
+            linear-gradient(45deg,
+            rgba(231, 76, 60, 0.3) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(231, 76, 60, 0.3) 50%,
+            rgba(231, 76, 60, 0.3) 75%,
+            transparent 75%,
+            transparent);
+    background-size: 6px 6px;
 }
 
 .cell--highlighted {
-    background-color: rgba(46, 204, 113, 0.3);
+    background-color: rgba(46, 204, 113, 0.4);
+    border-color: rgba(46, 204, 113, 0.5);
+    box-shadow: 0 0 3px rgba(46, 204, 113, 0.5);
 }
+

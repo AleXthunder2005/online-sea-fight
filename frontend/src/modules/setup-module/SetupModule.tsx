@@ -3,6 +3,7 @@ import styles from './styles/SetupModule.module.css';
 import type {BattlefieldMatrix, ShipDirection, ShipSize} from "@/types/ship.types.ts";
 import {Battlefield} from "@/components/battlefield";
 import {Button} from "@/ui/button";
+import {SeaFightEngine} from "@/engines/seaFightEngine.ts";
 
 interface SetupModuleProps {
     onStartGame: (userField: BattlefieldMatrix) => void;
@@ -28,7 +29,7 @@ const SetupModule = ({onStartGame} : SetupModuleProps) => {
 
         const { size, direction } = selectedShip;
 
-        if (canPlaceShip(row, col, size, direction, matrixState)) {
+        if (SeaFightEngine.canPlaceShip(row, col, size, direction, matrixState)) {
             const newMatrix = [...matrixState];
 
             // Ставим корабль
@@ -54,62 +55,11 @@ const SetupModule = ({onStartGame} : SetupModuleProps) => {
             }
         }
     }, [selectedShip, matrixState, availableShips]);
-    const canPlaceShip = (row: number, col: number, size: ShipSize, direction: ShipDirection, matrix: BattlefieldMatrix): boolean => {
-        // Проверяем границы поля
-        if (direction === 'horizontal') {
-            if (col + size > 10) return false;
-        } else {
-            if (row + size > 10) return false;
-        }
-
-        // Проверяем что все клетки свободны
-        for (let i = 0; i < size; i++) {
-            const cellRow = direction === 'horizontal' ? row : row + i;
-            const cellCol = direction === 'horizontal' ? col + i : col;
-
-            if (matrix[cellRow][cellCol] !== 'empty') return false;
-
-            // Проверяем соседние клетки
-            for (let r = Math.max(0, cellRow - 1); r <= Math.min(9, cellRow + 1); r++) {
-                for (let c = Math.max(0, cellCol - 1); c <= Math.min(9, cellCol + 1); c++) {
-                    if (matrix[r][c] === 'ship') return false;
-                }
-            }
-        }
-
-        return true;
-    };
     const autoPlaceAllShips = useCallback(() => {
-        const newMatrix: BattlefieldMatrix = Array(10).fill(null).map(() => Array(10).fill('empty'));
-        const shipsToPlace: ShipSize[] = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-
-        // Пытаемся расставить каждый корабль
-        for (const shipSize of shipsToPlace) {
-            let placed = false;
-            let attempts = 0;
-
-            while (!placed && attempts < 100) {
-                attempts++;
-                const direction: ShipDirection = Math.random() > 0.5 ? 'horizontal' : 'vertical';
-                const row = Math.floor(Math.random() * 10);
-                const col = Math.floor(Math.random() * 10);
-
-                if (canPlaceShip(row, col, shipSize, direction, newMatrix)) {
-                    // Ставим корабль
-                    for (let i = 0; i < shipSize; i++) {
-                        if (direction === 'horizontal') {
-                            newMatrix[row][col + i] = 'ship';
-                        } else {
-                            newMatrix[row + i][col] = 'ship';
-                        }
-                    }
-                    placed = true;
-                }
-            }
-        }
-
+        const newMatrix = SeaFightEngine.generateField();
         setMatrixState(newMatrix);
         setAvailableShips({ 1: 0, 2: 0, 3: 0, 4: 0 });
+        setSelectedShip(null);
     }, []);
     const resetField = useCallback(() => {
         setMatrixState(Array(10).fill(null).map(() => Array(10).fill('empty')));

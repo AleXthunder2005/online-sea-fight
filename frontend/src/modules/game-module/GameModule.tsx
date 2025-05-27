@@ -1,17 +1,17 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import styles from './styles/GameModule.module.css';
 import type {BattlefieldMatrix} from "@/types/ship.types.ts";
 import {GameBattlefield} from "@/components/game-battlefield";
+import {Button} from "@/ui/button";
+import {useNavigate} from "react-router-dom";
 
 interface GameModuleProps {
     playerField: BattlefieldMatrix;
-    onPlayerShot: (row: number, col: number) => boolean;
+    onPlayerShot: (row: number, col: number) => void;
     onOpponentShot?: (row: number, col: number) => boolean;
     opponentField?: BattlefieldMatrix;
     isPlayerTurn: boolean;
     gameStatus: 'waiting' | 'playing' | 'won' | 'lost';
-    chatMessages: string[];
-    onSendMessage: (message: string) => void;
 }
 
 const GameModule: React.FC<GameModuleProps> = ({
@@ -20,24 +20,8 @@ const GameModule: React.FC<GameModuleProps> = ({
                                                    opponentField,
                                                    isPlayerTurn,
                                                    gameStatus,
-                                                   chatMessages,
-                                                   onSendMessage
                                                }) => {
-    const [message, setMessage] = useState('');
-
-    const handleSendMessage = useCallback(() => {
-        if (message.trim()) {
-            onSendMessage(message);
-            setMessage('');
-        }
-    }, [message, onSendMessage]);
-
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSendMessage();
-        }
-    };
+    const navigate = useNavigate();
 
     return (
         <div className={styles['game-module']}>
@@ -68,32 +52,15 @@ const GameModule: React.FC<GameModuleProps> = ({
                 {gameStatus === 'won' && 'Вы победили!'}
                 {gameStatus === 'lost' && 'Вы проиграли'}
             </div>
+            <Button
+                color="var(--color-green)"
+                hoverColor="var(--color-green-dark)"
+                onClick={() => {navigate('/')}}
+                className={styles['to-menu-button']}
+            >
+                Выйти в меню
+            </Button>
 
-            <div className={styles['chat-container']}>
-                <h3>Чат</h3>
-                <div className={styles['chat-messages']}>
-                    {chatMessages.map((msg, index) => (
-                        <div key={index} className={styles['chat-message']}>
-                            {msg}
-                        </div>
-                    ))}
-                </div>
-                <div className={styles['chat-input']}>
-                    <textarea
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        placeholder="Введите сообщение..."
-                        rows={3}
-                    />
-                    <button
-                        onClick={handleSendMessage}
-                        className={styles['send-button']}
-                    >
-                        Отправить
-                    </button>
-                </div>
-            </div>
         </div>
     );
 };
