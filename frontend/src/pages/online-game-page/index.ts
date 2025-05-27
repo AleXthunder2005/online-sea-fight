@@ -1,0 +1,1 @@
+export {default as OnlineGamePage} from "./OnlineGamePage";

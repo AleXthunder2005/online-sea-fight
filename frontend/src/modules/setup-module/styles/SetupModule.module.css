@@ -135,6 +135,17 @@
 }
 
 .submit-button {
-    width:400px;
+    font-size: 16px;
+}
+
+.under-battlefield-buttons-container {
+    display: flex;
+    flex-direction: row-reverse;
+    width: 400px;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.to-menu-button {
     font-size: 16px;
 }

@@ -28,7 +28,7 @@ const MainPage = () => {
                             <Button
                                 color="var(--color-blue)"
                                 hoverColor="var(--color-blue-dark)"
-                                onClick={() => {navigate('/setup')}}
+                                onClick={() => {navigate('/online')}}
                             >
                                 Игра по сети
                             </Button>
@@ -37,7 +37,7 @@ const MainPage = () => {
                             <Button
                                 color="var(--color-green)"
                                 hoverColor="var(--color-green-dark)"
-                                onClick={() => {navigate('/setup')}}
+                                onClick={() => {navigate('/bot')}}
                             >
                                 Игра с ботом
                             </Button>

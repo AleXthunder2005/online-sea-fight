@@ -4,6 +4,7 @@ import type {BattlefieldMatrix, ShipDirection, ShipSize} from "@/types/ship.type
 import {Battlefield} from "@/components/battlefield";
 import {Button} from "@/ui/button";
 import {SeaFightEngine} from "@/engines/seaFightEngine.ts";
+import {useNavigate} from "react-router-dom";
 
 interface SetupModuleProps {
     onStartGame: (userField: BattlefieldMatrix) => void;
@@ -83,6 +84,8 @@ const SetupModule = ({onStartGame} : SetupModuleProps) => {
         }
     }, [selectedShip]);
 
+    const navigate = useNavigate();
+
     return (
         <div className={styles['setup-page']}>
             <h1 className={styles['title']}>Расстановка кораблей</h1>
@@ -139,15 +142,26 @@ const SetupModule = ({onStartGame} : SetupModuleProps) => {
                         selectedShip={selectedShip}
                     />
 
-                    <Button
-                        color='#2ecc71'
-                        hoverColor='#27ae60'
-                        disabled={Object.values(availableShips).some(count => count > 0)}
-                        className={styles['submit-button']}
-                        onClick={() => {onStartGame(matrixState)}}
-                    >
-                        Начать игру
-                    </Button>
+                    <div className={styles['under-battlefield-buttons-container']}>
+                        <Button
+                            color='#2ecc71'
+                            hoverColor='#27ae60'
+                            disabled={Object.values(availableShips).some(count => count > 0)}
+                            className={styles['submit-button']}
+                            onClick={() => {onStartGame(matrixState)}}
+                        >
+                            Начать игру
+                        </Button>
+
+                        <Button
+                            color="var(--color-green)"
+                            hoverColor="var(--color-green-dark)"
+                            onClick={() => {navigate('/')}}
+                            className={styles['to-menu-button']}
+                        >
+                            В меню
+                        </Button>
+                    </div>
 
                 </div>
             </div>

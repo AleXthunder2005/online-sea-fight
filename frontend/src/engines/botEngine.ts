@@ -7,6 +7,7 @@ export class Bot {
     private priorityCells: number[] = [];
     private setUserField;
 
+    // @ts-ignore
     constructor(userField : BattlefieldMatrix, setField) {
         this.userEngine = new SeaFightEngine(userField);
         for (let i = 0; i < 100; i++) {

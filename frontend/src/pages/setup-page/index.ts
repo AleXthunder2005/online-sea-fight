@@ -1,1 +1,1 @@
-export {default as SetupPage} from './SetupPage'
+export {default as BotGamePage} from './BotGamePage.tsx'

@@ -1,6 +1,7 @@
 import {MainPage} from "@/pages/main-page";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {SetupPage} from "@/pages/setup-page";
+import {BotGamePage} from "@/pages/setup-page";
+import {OnlineGamePage} from "@/pages/online-game-page";
 
 function App() {
 
@@ -9,7 +10,8 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element=<MainPage/> />
-                <Route path="/setup" element=<SetupPage/> />
+                <Route path="/online" element=<OnlineGamePage/> />
+                <Route path="/bot" element=<BotGamePage/> />
             </Routes>
         </BrowserRouter>
     </>
