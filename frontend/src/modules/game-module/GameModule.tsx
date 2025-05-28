@@ -4,6 +4,7 @@ import type {BattlefieldMatrix} from "@/types/ship.types.ts";
 import {GameBattlefield} from "@/components/game-battlefield";
 import {Button} from "@/ui/button";
 import {useNavigate} from "react-router-dom";
+import type {GameStatus} from "@/types/game.types.ts";
 
 interface GameModuleProps {
     playerField: BattlefieldMatrix;
@@ -11,7 +12,7 @@ interface GameModuleProps {
     onOpponentShot?: (row: number, col: number) => boolean;
     opponentField?: BattlefieldMatrix;
     isPlayerTurn: boolean;
-    gameStatus: 'waiting' | 'playing' | 'won' | 'lost';
+    gameStatus: GameStatus;
 }
 
 const GameModule: React.FC<GameModuleProps> = ({
@@ -41,7 +42,7 @@ const GameModule: React.FC<GameModuleProps> = ({
                         matrix={opponentField || Array(10).fill(null).map(() => Array(10).fill('empty'))}
                         interactive={isPlayerTurn && gameStatus === 'playing'}
                         onCellClick={onPlayerShot}
-                        showShips={false}
+                        showShips={(gameStatus === 'lost') || (gameStatus === 'won') || (gameStatus === 'opponentLeave')}
                     />
                 </div>
             </div>
@@ -51,7 +52,9 @@ const GameModule: React.FC<GameModuleProps> = ({
                 {gameStatus === 'playing' && (isPlayerTurn ? 'Ваш ход' : 'Ход противника')}
                 {gameStatus === 'won' && 'Вы победили!'}
                 {gameStatus === 'lost' && 'Вы проиграли'}
+                {gameStatus === 'opponentLeave' && 'Соперник отключился'}
             </div>
+
             <Button
                 color="var(--color-green)"
                 hoverColor="var(--color-green-dark)"
