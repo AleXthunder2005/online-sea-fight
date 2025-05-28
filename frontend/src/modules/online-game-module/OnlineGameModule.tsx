@@ -69,15 +69,19 @@ const OnlineGameModule = ({ filledPlayerField, userName}: OnlineGameModuleProps)
         setSoundEnabled(prev => !prev);
     }, []);
     const { playSound } = AudioPlayer();
+    const [prevGameStatus, setPrevGameStatus] = useState<GameStatus>('waiting');
+
     useEffect(() => {
-        if (!soundEnabled) return;
+        if (!soundEnabled || gameStatus === prevGameStatus) return;
 
         switch (gameStatus) {
             case 'won': playSound('win'); break;
             case 'lost': playSound('lose'); break;
             case 'opponentLeave': playSound('opponentLeave'); break;
         }
-    }, [gameStatus, playSound, soundEnabled])
+
+        setPrevGameStatus(gameStatus);
+    }, [gameStatus, playSound, soundEnabled, prevGameStatus]);
 
 
     // Обработка хода противника

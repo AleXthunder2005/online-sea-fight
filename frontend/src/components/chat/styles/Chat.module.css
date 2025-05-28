@@ -6,6 +6,7 @@
     flex-direction: column;
     gap: 1rem;
     width: 60%;
+    margin-top: 2rem;
 
     border: 1px solid #2a5dff;
     box-shadow: 0 0 10px rgba(42, 93, 255, 0.3);
@@ -77,7 +78,6 @@
     padding: 10px;
 }
 
-/* Для Firefox */
 .chat-messages {
     scrollbar-width: thin;
     scrollbar-color: rgba(42, 93, 255, 0.5) rgba(26, 58, 143, 0.2);
