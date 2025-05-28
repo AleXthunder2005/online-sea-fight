@@ -3,6 +3,7 @@ import {useCallback, useRef, useState} from "react";
 import {Bot} from "@/engines/botEngine.ts";
 import type {BattlefieldMatrix} from "@/types/ship.types.ts";
 import {GameModule} from "@/modules/game-module";
+import styles from "./styles/BotGameModule.module.css";
 
 interface  BotGameModuleProps {
     filledPlayerField: BattlefieldMatrix;
@@ -59,7 +60,7 @@ const BotGameModule = ({filledPlayerField} : BotGameModuleProps)  => {
     }, [bot]);
 
     return (
-        <>
+        <div className={styles['online-game-module-wrapper']}>
             <GameModule
                 playerField={playerField}
                 onPlayerShot={handlePlayerShot}
@@ -67,7 +68,7 @@ const BotGameModule = ({filledPlayerField} : BotGameModuleProps)  => {
                 isPlayerTurn={isPlayerTurn}
                 gameStatus={gameStatus}
             />
-        </>
+        </div>
     );
 };
 

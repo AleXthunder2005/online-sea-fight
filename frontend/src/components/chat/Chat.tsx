@@ -1,15 +1,21 @@
 import styles from './styles/Chat.module.css'
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useState, useEffect, useRef} from "react";
+import {Button} from "@/ui/button";
 
 interface ChatProps {
-    // initialChatMessages: string[];
     onSendMessage: (message: string) => void;
+    messages: {sender: string, message: string}[];
 }
 
-const Chat = ({onSendMessage} : ChatProps) => {
+const Chat = ({onSendMessage, messages} : ChatProps) => {
     const [message, setMessage] = useState('');
-    // @ts-ignore
-    const [chatMessages, setChatMessages] = useState<string[]>([]);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    // Автоматическая прокрутка сообщений вниз при новых сообщениях
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
 
     const handleSendMessage = useCallback(() => {
         if (message.trim()) {
@@ -29,26 +35,32 @@ const Chat = ({onSendMessage} : ChatProps) => {
         <div className={styles['chat-container']}>
             <h3>Чат</h3>
             <div className={styles['chat-messages']}>
-                {chatMessages.map((msg, index) => (
+                {messages.map((msg, index) => (
                     <div key={index} className={styles['chat-message']}>
-                        {msg}
+                        <strong>{msg.sender}:</strong> {msg.message}
                     </div>
                 ))}
+                <div ref={messagesEndRef} />
             </div>
             <div className={styles['chat-input']}>
-                    <textarea
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        placeholder="Введите сообщение..."
-                        rows={3}
-                    />
-                <button
-                    onClick={handleSendMessage}
+                <textarea
+                    ref={textareaRef}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Введите сообщение..."
+                    rows={3}
+                />
+
+                <Button
+                    color='#2ecc71'
+                    hoverColor='#27ae60'
+                    disabled={message.trim().length === 0}
                     className={styles['send-button']}
+                    onClick={handleSendMessage}
                 >
                     Отправить
-                </button>
+                </Button>
             </div>
         </div>
     );

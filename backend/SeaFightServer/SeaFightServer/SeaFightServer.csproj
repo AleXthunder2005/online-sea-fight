@@ -7,16 +7,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Application\**" />
+    <Compile Remove="Contracts\**" />
+    <Compile Remove="Endpoints\**" />
+    <Content Remove="Application\**" />
+    <Content Remove="Contracts\**" />
+    <Content Remove="Endpoints\**" />
+    <EmbeddedResource Remove="Application\**" />
+    <EmbeddedResource Remove="Contracts\**" />
+    <EmbeddedResource Remove="Endpoints\**" />
+    <None Remove="Application\**" />
+    <None Remove="Contracts\**" />
+    <None Remove="Endpoints\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Hubs\ChatHub.cs" />
+    <Compile Remove="Models\GameResult.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.1.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Contracts\" />
-    <Folder Include="Endpoints\" />
-    <Folder Include="Application\" />
   </ItemGroup>
 
 </Project>

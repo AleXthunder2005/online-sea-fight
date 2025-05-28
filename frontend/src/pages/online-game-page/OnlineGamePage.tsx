@@ -6,10 +6,12 @@ import {OnlineGameModule} from "@/modules/online-game-module";
 
 const OnlineGamePage = () => {
     const [userField, setUserField] = useState<BattlefieldMatrix | null>(null);
+    const [userName, setUserName] = useState<string>('Игрок');
     const [gameState, setGameState] = useState<GameState>("setup");
 
-    const handleStartGame = (userMatrix: BattlefieldMatrix) => {
+    const handleStartGame = (userMatrix: BattlefieldMatrix, userName: string) => {
         setUserField(userMatrix);
+        setUserName(userName);
         setGameState("onlineGame");
     };
 
@@ -21,7 +23,7 @@ const OnlineGamePage = () => {
                 />
             )}
             {gameState === "onlineGame" && userField && (
-                <OnlineGameModule filledPlayerField={userField} />
+                <OnlineGameModule filledPlayerField={userField} userName={userName} />
             )}
         </>
     );

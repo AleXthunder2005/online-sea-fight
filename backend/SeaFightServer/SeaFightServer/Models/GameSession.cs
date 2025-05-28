@@ -9,6 +9,8 @@
         public bool IsGameStarted { get; set; }
         public string[][] Player1Field { get; set; }
         public string[][] Player2Field { get; set; }
+        public string Player1Name { get; set; }
+        public string Player2Name { get; set; }
     }
 
 }

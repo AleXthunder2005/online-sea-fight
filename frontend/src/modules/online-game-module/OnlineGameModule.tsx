@@ -1,15 +1,18 @@
+import styles from './styles/OnlineGameModule.module.css'
 import {useCallback, useEffect, useRef, useState} from 'react';
 import { GameModule } from "@/modules/game-module";
 import type { BattlefieldMatrix } from "@/types/ship.types.ts";
 import { SeaFightEngine } from "@/engines/seaFightEngine.ts";
 import { useSeaBattleHub } from '@/hooks/useSeaBattleHub';
 import type {GameStatus} from "@/types/game.types.ts";
+import {Chat} from "@/components/chat";
 
 interface OnlineGameModuleProps {
     filledPlayerField: BattlefieldMatrix;
+    userName: string;
 }
 
-const OnlineGameModule = ({ filledPlayerField }: OnlineGameModuleProps) => {
+const OnlineGameModule = ({ filledPlayerField, userName}: OnlineGameModuleProps) => {
     const [playerField, setPlayerField] = useState<BattlefieldMatrix>(filledPlayerField);
     const [opponentField, setOpponentField] = useState<BattlefieldMatrix>(SeaFightEngine.createEmptyField);
     const [isPlayerTurn, setIsPlayerTurn] = useState(false);
@@ -18,7 +21,15 @@ const OnlineGameModule = ({ filledPlayerField }: OnlineGameModuleProps) => {
     const opponentFieldEngine = useRef<SeaFightEngine>(new SeaFightEngine(opponentField));
     const playerFieldEngine = useRef(new SeaFightEngine(playerField)).current;
 
-    const { session, connection, sendBattlefield, makeMove } = useSeaBattleHub(
+    const {
+        session,
+        connection,
+        chatMessages,
+        sendBattlefield,
+        makeMove,
+        sendChatMessage,
+        sendPlayerName
+    } = useSeaBattleHub(
         useCallback((isPlayerTurn: boolean) => {
             setIsPlayerTurn(isPlayerTurn);
             setGameStatus('playing');
@@ -26,6 +37,16 @@ const OnlineGameModule = ({ filledPlayerField }: OnlineGameModuleProps) => {
         setOpponentField,
         setGameStatus,
     );
+
+    // Отправляем имя игрока при создании сессии
+    useEffect(() => {
+        if (session && gameStatus === 'waiting') {
+
+
+            sendPlayerName(session.sessionId, userName || "Игрок");
+            sendBattlefield(session.sessionId, playerField);
+        }
+    }, [session, gameStatus, playerField, sendBattlefield, sendPlayerName]);
 
     // Отправляем поле на сервер при создании сессии
     useEffect(() => {
@@ -73,8 +94,6 @@ const OnlineGameModule = ({ filledPlayerField }: OnlineGameModuleProps) => {
         };
     }, [connection, handleOpponentTurn]);
 
-
-
     const handlePlayerShot = useCallback((row: number, col: number) => {
         if (!isPlayerTurn || gameStatus !== 'playing' || !session) return;
 
@@ -96,13 +115,22 @@ const OnlineGameModule = ({ filledPlayerField }: OnlineGameModuleProps) => {
     }, [isPlayerTurn, gameStatus, session, makeMove, opponentFieldEngine]);
 
     return (
-        <GameModule
-            playerField={playerField}
-            onPlayerShot={handlePlayerShot}
-            opponentField={opponentField}
-            isPlayerTurn={isPlayerTurn}
-            gameStatus={gameStatus}
-        />
+        <div className={styles['online-game-module-wrapper']}>
+            <GameModule
+                playerField={playerField}
+                onPlayerShot={handlePlayerShot}
+                opponentField={opponentField}
+                isPlayerTurn={isPlayerTurn}
+                gameStatus={gameStatus}
+            />
+
+            {(((gameStatus !== 'waiting') && (gameStatus !== 'opponentLeave')) &&
+                <Chat
+                    onSendMessage={(message) => session && sendChatMessage(session.sessionId, message)}
+                    messages={chatMessages}
+                />
+            )}
+        </div>
     );
 };
 

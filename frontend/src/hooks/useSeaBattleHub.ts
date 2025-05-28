@@ -8,6 +8,8 @@ import type {GameStatus} from "@/types/game.types.ts";
 interface GameSession {
     sessionId: string;
     isPlayerTurn: boolean;
+    playerName?: string;
+    opponentName?: string;
 }
 
 export const useSeaBattleHub = (
@@ -17,8 +19,10 @@ export const useSeaBattleHub = (
 ) => {
     const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
     const [session, setSession] = useState<GameSession | null>(null);
+    const [chatMessages, setChatMessages] = useState<{sender: string, message: string}[]>([]);
+    const [playerName, setPlayerName] = useState<string>('');
 
-    //Устанавливаем соединение с хабом на сервере
+    // Устанавливаем соединение с хабом на сервере
     useEffect(() => {
         const newConnection = new signalR.HubConnectionBuilder()
             .withUrl(`${BASE_API_URL}/seabattlehub`)
@@ -32,7 +36,7 @@ export const useSeaBattleHub = (
         };
     }, []);
 
-    //когда изменился connection стартуем соединение и вызываем joinQueue();
+    // Когда изменился connection стартуем соединение и вызываем joinQueue();
     useEffect(() => {
         if (connection) {
             connection.start()
@@ -52,12 +56,19 @@ export const useSeaBattleHub = (
         });
 
         connection.on('GameSessionCreated', (sessionId: string) => {
-            setSession({ sessionId, isPlayerTurn: false });
+            setSession(prev => ({
+                ...prev,
+                sessionId,
+                isPlayerTurn: false
+            }));
             console.log('Game session created... Session id =', sessionId);
         });
 
         connection.on('GameStarted', (isPlayerTurn: boolean) => {
-            setSession(prev => prev ? { ...prev, isPlayerTurn } : null);
+            setSession(prev => prev ? {
+                ...prev,
+                isPlayerTurn
+            } : null);
             console.log(`Game started...`);
             onGameStarted(isPlayerTurn);
         });
@@ -73,6 +84,17 @@ export const useSeaBattleHub = (
             console.log('Opponent disconnected');
             setSession(null);
             setGameStatus('opponentLeave');
+        });
+
+        connection.on('ReceiveChatMessage', (sender: string, message: string) => {
+            setChatMessages(prev => [...prev, {sender, message}]);
+        });
+
+        connection.on('ReceiveOpponentName', (name: string) => {
+            setSession(prev => prev ? {
+                ...prev,
+                opponentName: name
+            } : null);
         });
     };
 
@@ -97,10 +119,35 @@ export const useSeaBattleHub = (
         }
     }, [connection]);
 
+    const sendChatMessage = useCallback((sessionId: string, message: string) => {
+        if (connection && playerName) {
+            connection.invoke('SendChatMessage', sessionId, playerName, message)
+                .catch(err => console.error('SendChatMessage failed: ', err));
+        }
+        setChatMessages(prev => [...prev, {sender: playerName, message}]);
+    }, [connection, playerName]);
+
+    const sendPlayerName = useCallback((sessionId: string, name: string) => {
+        if (connection) {
+            setPlayerName(name);
+            connection.invoke('SendPlayerName', sessionId, name)
+                .then(() => {
+                    setSession(prev => prev ? {
+                        ...prev,
+                        playerName: name
+                    } : null);
+                })
+                .catch(err => console.error('SendPlayerName failed: ', err));
+        }
+    }, [connection]);
+
     return {
         session,
         connection,
+        chatMessages,
         sendBattlefield,
-        makeMove
+        makeMove,
+        sendChatMessage,
+        sendPlayerName
     };
 };

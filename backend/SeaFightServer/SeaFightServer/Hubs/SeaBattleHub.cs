@@ -105,19 +105,11 @@ namespace SeaFightServer.Hubs
                 }
             }
         }
-
       
         public async Task MakeMove(string sessionId, PlayerMove move)
         {
             if (_gameSessions.TryGetValue(sessionId, out var session))
             {
-                //// Проверяем, что ход делает правильный игрок
-                //if (Context.ConnectionId != session.CurrentTurnPlayerId)
-                //{
-                //    await Clients.Caller.SendAsync("InvalidMove", "Not your turn");
-                //    return;
-                //}
-
                 // Определяем ID противника
                 var opponentId = Context.ConnectionId == session.Player1ConnectionId
                     ? session.Player2ConnectionId
@@ -125,12 +117,41 @@ namespace SeaFightServer.Hubs
 
                 // Передаем ход противнику
                 await Clients.Client(opponentId).SendAsync("ReceiveOpponentMove", move);
+            }
+        }
 
-                //// Передаем ход обратно отправителю (для визуализации)
-                //await Clients.Caller.SendAsync("MoveAccepted", move);
+        public async Task SendPlayerName(string sessionId, string name)
+        {
+            if (_gameSessions.TryGetValue(sessionId, out var session))
+            {
+                // Сохраняем имя игрока и отправляем его сопернику
+                if (Context.ConnectionId == session.Player1ConnectionId)
+                {
+                    session.Player1Name = name;
+                    await Clients.Client(session.Player2ConnectionId)
+                        .SendAsync("ReceiveOpponentName", name);
+                }
+                else if (Context.ConnectionId == session.Player2ConnectionId)
+                {
+                    session.Player2Name = name;
+                    await Clients.Client(session.Player1ConnectionId)
+                        .SendAsync("ReceiveOpponentName", name);
+                }
+            }
+        }
 
-                //// Передаем ход другому игроку (даже если было попадание - логика на клиенте)
-                //session.CurrentTurnPlayerId = opponentId;
+        public async Task SendChatMessage(string sessionId, string senderName, string message)
+        {
+            if (_gameSessions.TryGetValue(sessionId, out var session))
+            {
+                // Определяем ID противника
+                var opponentId = Context.ConnectionId == session.Player1ConnectionId
+                    ? session.Player2ConnectionId
+                    : session.Player1ConnectionId;
+
+                // Передаем сообщение противнику
+                await Clients.Client(opponentId)
+                    .SendAsync("ReceiveChatMessage", senderName, message);
             }
         }
 

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import styles from './styles/SetupModule.module.css';
 import type {BattlefieldMatrix, ShipDirection, ShipSize} from "@/types/ship.types.ts";
 import {Battlefield} from "@/components/battlefield";
@@ -7,7 +7,7 @@ import {SeaFightEngine} from "@/engines/seaFightEngine.ts";
 import {useNavigate} from "react-router-dom";
 
 interface SetupModuleProps {
-    onStartGame: (userField: BattlefieldMatrix) => void;
+    onStartGame: (userField: BattlefieldMatrix, userName: string) => void;
 }
 
 const SetupModule = ({onStartGame} : SetupModuleProps) => {
@@ -24,6 +24,7 @@ const SetupModule = ({onStartGame} : SetupModuleProps) => {
         3: 2,
         4: 1
     });
+    const [playerName, setPlayerName] = useState('');
 
     const handleCellClick = useCallback((row: number, col: number) => {
         if (!selectedShip || availableShips[selectedShip.size] <= 0) return;
@@ -83,7 +84,13 @@ const SetupModule = ({onStartGame} : SetupModuleProps) => {
             });
         }
     }, [selectedShip]);
-
+    const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setPlayerName(e.target.value);
+    }, []);
+    const handleStartGame = useCallback(() => {
+        const name = playerName.trim() || 'Игрок';
+        onStartGame(matrixState, name);
+    }, [playerName, matrixState, onStartGame]);
     const navigate = useNavigate();
 
     return (
@@ -92,6 +99,18 @@ const SetupModule = ({onStartGame} : SetupModuleProps) => {
 
             <div className={styles['container']}>
                 <div className={styles['ships-panel']}>
+                    <div className={styles['registration-panel']}>
+                        <h3>Ваш никнейм:</h3>
+                        <input
+                            type="text"
+                            value={playerName}
+                            onChange={handleNameChange}
+                            placeholder="Введите ваш ник"
+                            maxLength={30}
+                            className={styles['name-input']}
+                        />
+                    </div>
+
                     <h3>Доступные корабли:</h3>
                     <div className={styles['ships']}>
                         {[4, 3, 2, 1].map((size) => (
@@ -148,7 +167,7 @@ const SetupModule = ({onStartGame} : SetupModuleProps) => {
                             hoverColor='#27ae60'
                             disabled={Object.values(availableShips).some(count => count > 0)}
                             className={styles['submit-button']}
-                            onClick={() => {onStartGame(matrixState)}}
+                            onClick={handleStartGame}
                         >
                             Начать игру
                         </Button>
@@ -156,17 +175,14 @@ const SetupModule = ({onStartGame} : SetupModuleProps) => {
                         <Button
                             color="var(--color-green)"
                             hoverColor="var(--color-green-dark)"
-                            onClick={() => {navigate('/')}}
+                            onClick={() => navigate('/')}
                             className={styles['to-menu-button']}
                         >
                             В меню
                         </Button>
                     </div>
-
                 </div>
             </div>
-
-
         </div>
     );
 };
