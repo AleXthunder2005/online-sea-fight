@@ -39,7 +39,7 @@
 .game-status {
     font-size: 1.8rem;
     margin: 0 0 0.7rem;
-    padding: 1rem 2rem;
+    padding: 0.7rem 2rem;
     background: rgba(42, 93, 255, 0.3);
     border-radius: 8px;
     text-align: center;
@@ -54,21 +54,48 @@
     max-width: 1000px;
 }
 
-/* Адаптация для мобильных устройств */
-@media (max-width: 768px) {
-    .battlefields-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 2rem;
-    }
+.sound-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: white;
+}
 
-    .battlefield-wrapper {
-        width: 100%;
-        max-width: 400px;
-    }
+.sound-checkbox {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    appearance: none;
+    background: rgba(26, 58, 143, 0.5);
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.3s;
+    border: 1px solid #2a5dff;
+}
 
-    .game-status {
-        font-size: 1.4rem;
-        padding: 0.8rem;
-    }
+.sound-checkbox:checked {
+    background: #2ecc71;
+}
+
+.sound-checkbox::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    top: 1px;
+    left: 1px;
+    background: white;
+    transition: transform 0.3s;
+}
+
+.sound-checkbox:checked::before {
+    transform: translateX(20px);
+}
+
+.sound-label {
+    font-size: 0.9rem;
+    cursor: pointer;
 }

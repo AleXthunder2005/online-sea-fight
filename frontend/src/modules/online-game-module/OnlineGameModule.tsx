@@ -6,6 +6,7 @@ import { SeaFightEngine } from "@/engines/seaFightEngine.ts";
 import { useSeaBattleHub } from '@/hooks/useSeaBattleHub';
 import type {GameStatus} from "@/types/game.types.ts";
 import {Chat} from "@/components/chat";
+import {AudioPlayer} from "@/components/audio-player";
 
 interface OnlineGameModuleProps {
     filledPlayerField: BattlefieldMatrix;
@@ -61,12 +62,31 @@ const OnlineGameModule = ({ filledPlayerField, userName}: OnlineGameModuleProps)
     }, [opponentField]);
 
 
+    // Настройка звуков
+    const [soundEnabled, setSoundEnabled] = useState(true);
+
+    const toggleSound = useCallback(() => {
+        setSoundEnabled(prev => !prev);
+    }, []);
+    const { playSound } = AudioPlayer();
+    useEffect(() => {
+        if (!soundEnabled) return;
+
+        switch (gameStatus) {
+            case 'won': playSound('win'); break;
+            case 'lost': playSound('lose'); break;
+            case 'opponentLeave': playSound('opponentLeave'); break;
+        }
+    }, [gameStatus, playSound, soundEnabled])
+
+
     // Обработка хода противника
     const handleOpponentTurn = useCallback((row: number, col: number) => {
         if (gameStatus !== 'playing') return;
 
         // Обрабатываем выстрел противника
         const wasHit = playerFieldEngine.shoot(row, col);
+        if (soundEnabled) playSound('boom');
         setPlayerField([...playerFieldEngine.getField()]);
 
         // Проверяем поражение
@@ -79,7 +99,7 @@ const OnlineGameModule = ({ filledPlayerField, userName}: OnlineGameModuleProps)
         if (!wasHit) {
             setIsPlayerTurn(true);
         }
-    }, [gameStatus, playerFieldEngine]);
+    }, [gameStatus, playerFieldEngine, soundEnabled]);
 
     // Настройка обработчиков сообщений от сервера
     useEffect(() => {
@@ -99,6 +119,7 @@ const OnlineGameModule = ({ filledPlayerField, userName}: OnlineGameModuleProps)
 
         // Игрок делает выстрел
         const wasHit = opponentFieldEngine.current.shoot(row, col);
+        if (soundEnabled) playSound('boom');
         setOpponentField([...opponentFieldEngine.current.getField()]);
 
         // Отправляем ход на сервер
@@ -112,7 +133,7 @@ const OnlineGameModule = ({ filledPlayerField, userName}: OnlineGameModuleProps)
 
         if (wasHit) return;  // Если игрок попал, он ходит еще раз
         setIsPlayerTurn(false);  // Иначе ход противника
-    }, [isPlayerTurn, gameStatus, session, makeMove, opponentFieldEngine]);
+    }, [isPlayerTurn, gameStatus, session, makeMove, opponentFieldEngine, soundEnabled]);
 
     return (
         <div className={styles['online-game-module-wrapper']}>
@@ -122,6 +143,8 @@ const OnlineGameModule = ({ filledPlayerField, userName}: OnlineGameModuleProps)
                 opponentField={opponentField}
                 isPlayerTurn={isPlayerTurn}
                 gameStatus={gameStatus}
+                soundEnabled={soundEnabled}
+                onSoundToggle={toggleSound}
             />
 
             {(((gameStatus !== 'waiting') && (gameStatus !== 'opponentLeave')) &&

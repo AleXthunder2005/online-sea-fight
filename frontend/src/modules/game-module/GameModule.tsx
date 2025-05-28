@@ -13,6 +13,8 @@ interface GameModuleProps {
     opponentField?: BattlefieldMatrix;
     isPlayerTurn: boolean;
     gameStatus: GameStatus;
+    soundEnabled: boolean;
+    onSoundToggle: () => void;
 }
 
 const GameModule: React.FC<GameModuleProps> = ({
@@ -21,11 +23,26 @@ const GameModule: React.FC<GameModuleProps> = ({
                                                    opponentField,
                                                    isPlayerTurn,
                                                    gameStatus,
+                                                   soundEnabled,
+                                                   onSoundToggle,
                                                }) => {
     const navigate = useNavigate();
 
     return (
         <div className={styles['game-module']}>
+            <div className={styles['sound-control']}>
+                <input
+                    type="checkbox"
+                    id="sound-toggle"
+                    className={styles['sound-checkbox']}
+                    checked={soundEnabled}
+                    onChange={onSoundToggle}
+                />
+                <label htmlFor="sound-toggle" className={styles['sound-label']}>
+                    {soundEnabled ? 'Звук включен' : 'Звук выключен'}
+                </label>
+            </div>
+
             <div className={styles['battlefields-container']}>
                 <div className={styles['battlefield-wrapper']}>
                     <h3>Ваше поле</h3>

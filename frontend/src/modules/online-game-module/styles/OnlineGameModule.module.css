@@ -1,7 +1,7 @@
 .online-game-module-wrapper {
     background: linear-gradient(to bottom, #1a3a8f, #0a1f4d);
     min-height: 100vh;
-    padding: 2rem;
+    padding: 1rem;
     color: white;
     font-family: 'Arial', sans-serif;
     display: flex;
